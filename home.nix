@@ -1,4 +1,7 @@
-{ pkgs, username, ... }: {
+{ pkgs, username, ... }: let
+  gitName = "dk";
+  gitEmail = "dk@dk-u-s";
+in {
   home.username = username;
   home.homeDirectory = "/home/${username}";
   home.stateVersion = "25.11";
@@ -31,12 +34,22 @@
     };
   };
 
+  programs.git = {
+    enable = true;
+    settings = {
+      user = {
+        name = gitName;
+        email = gitEmail;
+      };
+    };
+  };
+
   programs.jujutsu = {
     enable = true;
     settings = {
       user = {
-        name = "dk";
-        email = "dk@dk-u-s";
+        name = gitName;
+        email = gitEmail;
       };
     };
   };
