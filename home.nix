@@ -1,6 +1,11 @@
 { pkgs, username, ... }: let
   gitName = "dk";
   gitEmail = "dk@dk-u-s";
+
+  # jjの補完スクリプトを生成
+  jjCompletion = pkgs.runCommand "jj_completion.nu" {} ''
+    ${pkgs.jujutsu}/bin/jj util completion nushell > $out
+  '';
 in {
   home.username = username;
   home.homeDirectory = "/home/${username}";
@@ -31,6 +36,7 @@ in {
       default_shell = "nu";
       default_mode = "locked";
       default_cwd = "/home/dk";
+      show_startup_tips = false;
     };
   };
 
@@ -60,6 +66,8 @@ in {
       $env.config.edit_mode = "vi"
       def l [] { ls -l | sort-by modified --reverse }
       def ll [] { ls -la | sort-by modified --reverse }
+      # jjの補完
+      ${builtins.readFile jjCompletion}
     '';
     shellAliases = {
     };
