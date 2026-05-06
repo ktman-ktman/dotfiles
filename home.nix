@@ -19,10 +19,10 @@ in {
     ripgrep    # grep
     dust       # du
     sd         # sed
-    delta      # git diff viewer
+    # delta      # git diff viewer
+    lazyjj     # jujutu
     gitui      # git TUI
     procs      # ps
-    zoxide     # cd
     yazi       # ファイルマネージャー
     hyperfine  # ベンチマーク
     tokei      # コード行数
@@ -68,9 +68,35 @@ in {
       def ll [] { ls -la | sort-by modified --reverse }
       # jjの補完
       ${builtins.readFile jjCompletion}
+      # 履歴
+      $env.config = {
+        history: {
+          max_size: 1000000
+          sync_on_enter: true
+          file_format: "sqlite"
+          isolation: false  # ← ここをfalse（共有）にする
+        }
+      }
     '';
     shellAliases = {
     };
+  };
+
+  programs.zoxide = {
+    enable = true;
+    enableNushellIntegration = true;
+  };
+
+  # nushell用fazzy finder
+  programs.television= {
+    enable = true;
+    enableNushellIntegration = true;
+  };
+
+  # zoxideにtelevisionを使わせるための環境変数
+  home.sessionVariables = {
+    # zoxideが内部で呼び出すコマンドをtvに差し替える
+    _ZO_FZF_ITERM = "tv"; 
   };
 
   programs.bottom.enable = true;
