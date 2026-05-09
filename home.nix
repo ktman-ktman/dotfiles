@@ -1,4 +1,4 @@
-{ pkgs, username, ... }: let
+{ pkgs, username, llm-agents, ... }: let
   gitName = "dk";
   gitEmail = "dk@dk-u-s";
 
@@ -6,6 +6,8 @@
   jjCompletion = pkgs.runCommand "jj_completion.nu" {} ''
     ${pkgs.jujutsu}/bin/jj util completion nushell > $out
   '';
+  # ...既存のlet束縛...
+  agents = llm-agents.packages.${pkgs.system};
 in {
   home.username = username;
   home.homeDirectory = "/home/${username}";
@@ -27,6 +29,11 @@ in {
     hyperfine  # ベンチマーク
     tokei      # コード行数
     just       # タスクランナー
+    # AI agents
+    agents.claude-code
+    # agents.codex
+    agents.gemini-cli
+    agents.opencode
   ];
 
   # programs.*モジュールで管理するもの
@@ -37,6 +44,9 @@ in {
       default_mode = "locked";
       default_cwd = "/home/dk";
       show_startup_tips = false;
+      copy_command = if builtins.pathExists /proc/sys/fs/binfmt_misc/WSLInterop
+      then "clip.exe"
+      else "xclip -selection clipboard";  # あるいは "wl-copy"
     };
   };
 
